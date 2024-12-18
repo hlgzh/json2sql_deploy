@@ -1,0 +1,1366 @@
+/* 全局样式 */
+:root {
+    --primary-color: #3b82f6;
+    --primary-light: #60a5fa;
+    --primary-dark: #2563eb;
+    --secondary-color: #64748b;
+    --background-color: #ffffff;
+    --card-background: #ffffff;
+    --editor-background: #f8fafc;
+    --text-color: #1a1a1a;
+    --text-secondary: #4a5568;
+    --border-color: #e2e8f0;
+    --hover-color: #f7fafc;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --transition: all 0.2s ease;
+    --border-radius: 0.5rem;
+    --editor-text-color: #1e293b;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+}
+
+/* 导航栏样式 */
+.navbar {
+    background-color: var(--primary-color);
+    padding: 0.75rem;
+    color: white;
+}
+
+.navbar-brand {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+}
+
+/* 主布局 */
+.main-layout {
+    display: flex;
+    height: calc(100vh - 60px); /* 减去导航栏高度 */
+}
+
+/* 左侧滑动条 */
+.sidebar {
+    width: 240px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* 自定义滚动条样式 */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* 侧边栏分组样式 */
+.sidebar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.group-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.group-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.sidebar-item {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+}
+
+.sidebar-item i {
+    font-size: 1.125rem;
+}
+
+.sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-item.active {
+    background-color: rgba(255, 255, 255, 0.3);
+    font-weight: 500;
+}
+
+/* 主内容区域 */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 编辑器容器 */
+.editor-container {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+    gap: 0;
+    touch-action: none;
+}
+
+/* 编辑器卡片 */
+.editor-card {
+    height: 100%;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    will-change: width;
+    transition: none;
+}
+
+#left-editor, #right-editor {
+    width: 50%;
+}
+
+/* 分隔条 */
+.editor-resizer {
+    width: 10px;
+    margin: 0;
+    cursor: col-resize;
+    position: relative;
+    z-index: 100;
+    background-color: transparent;
+    flex: 0 0 10px;
+    touch-action: none;
+    will-change: transform;
+}
+
+.editor-resizer::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--border-color);
+    transition: all 0.15s ease;
+    will-change: width, background-color, left;
+}
+
+.editor-resizer:hover::before {
+    width: 4px;
+    background-color: var(--primary-color);
+    left: 3px;
+}
+
+.editor-resizer.dragging::before {
+    width: 4px;
+    background-color: var(--primary-color);
+    left: 3px;
+    transition: none;
+}
+
+/* 拖动时的优化 */
+.dragging-active {
+    cursor: col-resize !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+.dragging-active * {
+    cursor: col-resize !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* 编辑器内容 */
+.editor-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* JSON 编辑器样式 */
+.json-editor {
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+/* SQL 转换区域样式 */
+.sql-editors {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* 编辑器卡片样式 */
+.editor-card {
+    background-color: var(--editor-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.editor-header {
+    background-color: var(--hover-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.editor-title {
+    color: var(--text-color);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* CodeMirror 自定义样式 */
+.CodeMirror {
+    height: 100% !important;
+    font-family: 'Fira Code', monospace !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: var(--editor-text-color) !important;
+    background-color: var(--editor-background) !important;
+    padding: 0.5rem !important;
+}
+
+.CodeMirror-gutters {
+    border-right: 1px solid var(--border-color) !important;
+    background-color: var(--editor-background) !important;
+}
+
+.CodeMirror-linenumber {
+    color: var(--text-secondary) !important;
+}
+
+/* JSON编辑器特定样式 */
+#jsonInput {
+    color: var(--editor-text-color) !important;
+    background-color: var(--editor-background) !important;
+}
+
+/* SQL输出特定样式 */
+#sqlOutput {
+    color: #e2e8f0 !important;
+    background-color: #1e293b !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+}
+
+.cm-s-material .cm-string {
+    color: #c2185b !important;
+}
+
+.cm-s-material .cm-number {
+    color: #1976d2 !important;
+}
+
+.cm-s-material .cm-property {
+    color: #0d47a1 !important;
+}
+
+.cm-s-material .cm-keyword {
+    color: #7c4dff !important;
+    font-weight: 700 !important;
+}
+
+.cm-s-material .cm-builtin {
+    color: #0369a1 !important;
+    font-weight: 600 !important;
+}
+
+.cm-s-material .cm-def {
+    color: #0284c7 !important;
+    font-weight: 600 !important;
+}
+
+.cm-s-material .cm-operator {
+    color: #475569 !important;
+    font-weight: 600 !important;
+}
+
+.cm-s-material .cm-variable {
+    color: #334155 !important;
+    font-weight: 600 !important;
+}
+
+/* SQL编辑器主题覆盖 */
+.editor-card:nth-child(2) .CodeMirror {
+    background-color: #1e293b !important;
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+    letter-spacing: 0.3px !important;
+    color: #e2e8f0 !important;
+}
+
+.editor-card:nth-child(2) .CodeMirror-gutters {
+    background-color: #1e293b !important;
+    border-right: 1px solid #334155 !important;
+}
+
+.editor-card:nth-child(2) .CodeMirror-linenumber {
+    color: #64748b !important;
+}
+
+/* SQL语法高亮 - 深色主题 */
+.editor-card:nth-child(2) .cm-s-material .cm-keyword {
+    color: #93c5fd !important;  /* 浅蓝色 */
+    font-weight: 700 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-operator {
+    color: #cbd5e1 !important;  /* 浅灰色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-number {
+    color: #7dd3fc !important;  /* 天蓝色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-string {
+    color: #fca5a5 !important;  /* 浅红色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-variable {
+    color: #e2e8f0 !important;  /* 浅灰白色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-variable-2 {
+    color: #bae6fd !important;  /* 浅蓝色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-def {
+    color: #93c5fd !important;  /* 浅蓝色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-builtin {
+    color: #a5b4fc !important;  /* 浅紫色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) .cm-s-material .cm-atom {
+    color: #c4b5fd !important;  /* 浅紫色 */
+    font-weight: 600 !important;
+}
+
+.editor-card:nth-child(2) {
+    background-color: #1e293b !important;
+}
+
+/* 修改编辑器头部样式以匹配深色主题 */
+.editor-card:nth-child(2) .editor-header {
+    background-color: #1e293b !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+.editor-card:nth-child(2) .editor-title {
+    color: #e2e8f0 !important;
+}
+
+/* 按钮样式 */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: var(--transition);
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--hover-color);
+}
+
+/* 转换选项样式 */
+.conversion-options {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.form-control, .form-select {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* 状态提示样式 */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    font-size: 0.75rem;
+    font-weight: 500;
+    gap: 0.25rem;
+}
+
+.status-badge.valid {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.status-badge.invalid {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--card-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border: 3px solid var(--card-background);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .editor-container {
+        flex-direction: column;
+    }
+    
+    .editor-resizer {
+        display: none;
+    }
+
+    #left-editor, #right-editor {
+        width: 100%;
+        height: 50%;
+    }
+}
+
+/* 编辑器内容样式 */
+.editor-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 48px); /* 减去header高度 */
+}
+
+/* 配置表格区域 */
+.config-section {
+    height: 50%;
+    padding: 0.75rem;
+    background: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-table-container {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.config-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.75rem;
+    background: var(--card-background);
+    position: relative;
+}
+
+.config-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--editor-background);
+}
+
+.config-table tbody {
+    position: relative;
+}
+
+.config-table th {
+    padding: 0.5rem 0.375rem;
+    font-weight: 600;
+    text-align: left;
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+    background: var(--editor-background);
+}
+
+.config-table td {
+    padding: 0.375rem;
+    border: 1px solid var(--border-color);
+    vertical-align: middle;
+    background: var(--card-background);
+}
+
+/* 确保表头下方的边框可见 */
+.config-table thead::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.config-table tr:hover td {
+    background-color: var(--hover-color);
+}
+
+/* 下拉框样式优化 */
+.config-table select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    background: var(--editor-background) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%234a5568' d='M4.646 6.146a.5.5 0 0 1 .708 0L8 8.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") no-repeat right 0.25rem center;
+    background-size: 12px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.config-table select:hover {
+    border-color: var(--primary-light);
+}
+
+.config-table select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 文本输入框样式优化 */
+.config-table input[type="text"] {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    background: var(--editor-background);
+    color: var(--text-color);
+    transition: all 0.2s;
+}
+
+.config-table input[type="text"]:hover {
+    border-color: var(--primary-light);
+}
+
+.config-table input[type="text"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 操作按钮样式 */
+.config-table .btn-action {
+    padding: 0.25rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+}
+
+.config-table .btn-action i {
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.config-table .btn-action:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* 列宽度和对齐方式优化 */
+.config-table th:nth-child(1), /* 字段名 */
+.config-table td:nth-child(1) {
+    width: 20%;
+    padding-left: 1rem;
+    text-align: left;
+}
+
+.config-table th:nth-child(2), /* 数据类型 */
+.config-table td:nth-child(2) {
+    width: 15%;
+}
+
+.config-table th:nth-child(3), /* 长度/值 */
+.config-table td:nth-child(3) {
+    width: 10%;
+}
+
+.config-table th:nth-child(5), /* 键 */
+.config-table td:nth-child(5) {
+    width: 12%;
+}
+
+.config-table th:nth-child(6), /* 注释 */
+.config-table td:nth-child(6) {
+    width: 25%;
+}
+
+.config-table th:nth-child(7), /* 操作 */
+.config-table td:nth-child(7) {
+    width: 10%;
+    text-align: center;
+}
+
+/* 字段名单元格样式 */
+.config-table .field-name {
+    font-weight: 500;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 输出区域样式优化 */
+.output-section {
+    height: 50%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--editor-background);
+    border-top: 1px solid var(--border-color);
+}
+
+.output-header {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #f8f9fa;
+}
+
+.output-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.output-actions .btn-icon {
+    padding: 4px 8px;
+    font-size: 14px;
+}
+
+.sql-output {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 12px;
+}
+
+/* 自定义滚动条样式 */
+.config-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.config-table-container::-webkit-scrollbar-track {
+    background: var(--editor-background);
+}
+
+.config-table-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.config-table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+表格动画效果
+.config-table tr {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* .config-table tr:hover {
+    transform: translateX(2px);
+    position: relative;
+    z-index: 1;
+} */
+
+/* 输入框和下拉框焦点动画 */
+.config-table input[type="text"],
+.config-table select {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.config-table input[type="text"]:focus,
+.config-table select:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 按钮动画效果 */
+.config-table .btn-action {
+    position: relative;
+    overflow: hidden;
+}
+
+.config-table .btn-action::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.config-table .btn-action:active::after {
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+}
+
+/* 表格拖拽排序样式 */
+.config-table tr.dragging {
+    opacity: 0.5;
+    background: var(--editor-background);
+}
+
+.config-table tr.drag-over {
+    border-top: 2px solid var(--primary-color);
+}
+
+/* 字段类型标签 */
+.type-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-left: 6px;
+}
+
+.type-tag.string { background: rgba(52, 199, 89, 0.1); color: #34c759; }
+.type-tag.number { background: rgba(0, 122, 255, 0.1); color: #007aff; }
+.type-tag.boolean { background: rgba(255, 149, 0, 0.1); color: #ff9500; }
+.type-tag.object { background: rgba(175, 82, 222, 0.1); color: #af52de; }
+.type-tag.array { background: rgba(255, 45, 85, 0.1); color: #ff2d55; }
+
+/* 复制按钮样式 */
+.copy-btn {
+    position: absolute;
+    right: 40px;
+    top: 8px;
+    padding: 2px 6px;
+    background: var(--editor-background);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.copy-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.json-editor:hover .copy-btn,
+.sql-output:hover .copy-btn {
+    opacity: 1;
+}
+
+/* 表格过滤器样式 */
+.table-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.table-filter input {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    background: var(--editor-background);
+    color: var(--text-color);
+}
+
+.table-filter .filter-tag {
+    padding: 2px 8px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.table-filter .filter-tag .remove {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.table-filter .filter-tag .remove:hover {
+    opacity: 1;
+}
+
+/* 状态指示器 */
+.status-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: var(--editor-background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: var(--text-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+}
+
+.status-indicator.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.status-indicator .icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-indicator .icon.success { background: #34c759; }
+.status-indicator .icon.error { background: #ff3b30; }
+.status-indicator .icon.warning { background: #ff9500; }
+
+/* 键类型标记 */
+.key-indicator {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.key-indicator.primary { background: #ff3b30; }
+.key-indicator.unique { background: #ff9500; }
+.key-indicator.index { background: #34c759; }
+
+/* 高级动画效果 */
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: scale(1);
+    opacity: 1;
+    animation: ripple 0.6s linear;
+}
+
+/* 表格行展开/折叠动画 */
+.config-table tr {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 删除行动画 */
+.config-table tr.removing {
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* 表头渐变背景 */
+.config-table th {
+    background: linear-gradient(180deg, 
+        var(--editor-background) 0%,
+        var(--card-background) 100%);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* 字段名称悬停效果 */
+.config-table .field-name {
+    position: relative;
+    padding: 0.25rem 0;
+}
+
+.config-table .field-name::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.config-table tr:hover .field-name::after {
+    width: 100%;
+}
+
+/* 输出区域优化 */
+.output-section {
+    position: relative;
+}
+
+.output-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right,
+        var(--primary-color) 0%,
+        var(--primary-light) 100%);
+    opacity: 0.7;
+}
+
+.output-header {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.output-header::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+/* 错误状态样式 */
+.config-table .error input,
+.config-table .error select {
+    border-color: var(--error-color);
+    background-color: rgba(255, 0, 0, 0.02);
+}
+
+.config-table .error input:focus,
+.config-table .error select:focus {
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+/* 必填字段标记 */
+.required-field::after {
+    content: '*';
+    color: var(--error-color);
+    margin-left: 4px;
+}
+
+/* 工具提示样式 */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    padding: 4px 8px;
+    background: var(--editor-background);
+    color: var(--text-color);
+    font-size: 0.75rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+[data-tooltip]:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-8px);
+}
+
+/* 加载状态动画 */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.loading {
+    animation: pulse 1.5s infinite;
+    pointer-events: none;
+}
+
+/* 响应式优化 */
+@media (max-width: 1200px) {
+    .config-table {
+        font-size: 0.8125rem;
+    }
+    
+    .config-table th,
+    .config-table td {
+        padding: 0.375rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .config-section {
+        padding: 0.5rem;
+    }
+    
+    .output-header {
+        font-size: 0.8125rem;
+    }
+}
+
+/* 主题切换动画 */
+* {
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+/* 卡片阴影和悬浮效果 */
+.card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+/* JSON编辑器增强 */
+.json-editor {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.json-editor::before {
+    content: 'JSON';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 2px 6px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    z-index: 1;
+}
+
+/* SQL输出增强 */
+.sql-output {
+    position: relative;
+    overflow: hidden;
+}
+
+.sql-output::before {
+    content: 'SQL';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 2px 6px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    z-index: 1;
+}
+
+/* 反馈按钮样式 */
+.btn-outline-light {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-outline-light i {
+    font-size: 1.1rem;
+}
+
+.btn-outline-light span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* SQL 编辑器样式优化 */
+.output-section .CodeMirror {
+    height: auto;
+    font-family: 'Fira Code', monospace;
+    line-height: 1.6;
+    padding: 8px 0;
+}
+
+.output-section .CodeMirror-lines {
+    padding: 8px 0;
+    cursor: text;
+}
+
+.output-section .CodeMirror-line {
+    padding: 0 8px;
+    min-height: 1.6em;
+}
+
+/* 优化选择区域样式 */
+.output-section .CodeMirror-selected {
+    background: rgba(59, 130, 246, 0.1) !important;
+}
+
+.output-section .CodeMirror-focused .CodeMirror-selected {
+    background: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* 优化光标样式 */
+.output-section .CodeMirror-cursor {
+    border-left: 2px solid #3b82f6;
+    border-right: none;
+    width: 0;
+}
+
+/* 改善滚动行为 */
+.output-section .CodeMirror-scroll {
+    min-height: 100px;
+    max-height: calc(100vh - 400px);
+}
+
+
+
+
+
+
+/* 调整折叠小部件的大小和样式 */
+.CodeMirror-foldgutter-open,
+.CodeMirror-foldgutter-folded {
+    font-size: 12px;          /* 增加字体大小 */
+    width: 12px;              /* 增加宽度 */
+    height: 12px;             /* 增加高度 */
+    line-height: 12px;        /* 调整行高 */
+    text-align: center;       /* 居中对齐 */
+    cursor: pointer;          /* 鼠标指针样式 */
+    color: #666;              /* 颜色 */
+    padding: 2px;             /* 内边距 */
+}
+
+/* 悬停效果 */
+.CodeMirror-foldgutter-open:hover,
+.CodeMirror-foldgutter-folded:hover {
+    color: #000;              /* 悬停时的颜色 */
+    background-color: #f0f0f0; /* 悬停时的背景色 */
+    border-radius: 3px;       /* 圆角 */
+}
+
+/* 调整折叠槽的宽度 */
+.CodeMirror-foldgutter {
+    width: 12px;              /* 增加槽的宽度 */
+}
+
+/* 调整折叠标记的位置 */
+.CodeMirror-gutters {
+    padding-right: 5px;       /* 右侧padding */
+}
+
+/* 自定义折叠图标 */
+.CodeMirror-foldgutter-open:after {
+    content: "▼";             /* 展开状态的图标 */
+    display: inline-block;
+    transform: scale(1.2);    /* 放大图标 */
+}
+
+.CodeMirror-foldgutter-folded:after {
+    content: "▶";             /* 折叠状态的图标 */
+    display: inline-block;
+    transform: scale(1.2);    /* 放大图标 */
+}
+
+/* 优化点击区域 */
+.CodeMirror-foldgutter-open,
+.CodeMirror-foldgutter-folded {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+}
+
+/* 可选：添加过渡效果 */
+.CodeMirror-foldgutter-open,
+.CodeMirror-foldgutter-folded {
+    transition: all 0.2s ease;
+}
+
+/* 可选：添加阴影效果 */
+.CodeMirror-foldgutter-open:hover,
+.CodeMirror-foldgutter-folded:hover {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}

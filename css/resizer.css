@@ -1,0 +1,225 @@
+/* 编辑器内容区域布局 */
+.editor-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.config-section {
+    min-height: 120px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.sql-output {
+    min-height: 100px;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* 垂直分隔条样式 */
+.editor-vertical-resizer {
+    height: 6px;
+    cursor: row-resize;
+    position: sticky;
+    top: 0;
+    background-color: transparent;
+    flex: 0 0 6px;
+    touch-action: none;
+    will-change: transform;
+    z-index: 10;
+    margin: 2px 0;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.editor-vertical-resizer::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 2px;
+    width: 40px;
+    height: 2px;
+    background-color: var(--border-color);
+    transform: translateX(-50%);
+    transition: all 0.15s ease;
+    border-radius: 1px;
+}
+
+.editor-vertical-resizer:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.editor-vertical-resizer:hover::before {
+    background-color: var(--primary-color);
+    height: 2px;
+}
+
+.editor-vertical-resizer.dragging {
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+.editor-vertical-resizer.dragging::before {
+    background-color: var(--primary-color);
+    height: 2px;
+}
+
+/* 编辑器容器和分隔条的样式 */
+.editor-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    gap: 0;
+}
+
+.editor-card {
+    height: 100%;
+    /* 移除过渡动画以提高响应速度 */
+    /* transition: width 0.1s ease; */
+}
+
+.editor-resizer {
+    width: 4px;
+    background-color: #e0e0e0;
+    cursor: col-resize;
+    flex: none;
+}
+
+.editor-resizer:hover {
+    background-color: #999;
+}
+
+/* 水平分隔条样式 */
+.editor-horizontal-resizer {
+    width: 10px;
+    cursor: col-resize;
+    position: relative;
+    background-color: transparent;
+    flex: 0 0 10px;
+    touch-action: none;
+    will-change: transform;
+}
+
+.editor-horizontal-resizer::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--border-color);
+    transition: all 0.15s ease;
+    will-change: width, background-color, left;
+}
+
+.editor-horizontal-resizer:hover::before {
+    width: 4px;
+    background-color: var(--primary-color);
+    left: 3px;
+}
+
+.editor-horizontal-resizer.dragging::before {
+    width: 4px;
+    background-color: var(--primary-color);
+    left: 3px;
+}
+
+/* 拖动时的全局样式 */
+body.dragging {
+    cursor: col-resize !important;
+    user-select: none;
+}
+
+body.dragging .editor-resizer {
+    background-color: #999;
+}
+
+body.dragging iframe,
+body.dragging input {
+    pointer-events: none;
+}
+
+body.resizing {
+    cursor: col-resize !important;
+    user-select: none;
+}
+
+body.resizing iframe,
+body.resizing input {
+    pointer-events: none;
+}
+
+/* 侧边栏收缩样式 */
+.sidebar {
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.sidebar.collapsed {
+    width: 0 !important;
+    padding: 0;
+    overflow: hidden;
+}
+
+.sidebar.collapsed .sidebar-group,
+.sidebar.collapsed .group-title {
+    display: none;
+}
+
+/* 收缩按钮样式 */
+.sidebar-toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+    margin-right: 12px;
+    vertical-align: middle;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-toggle:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle svg {
+    transition: transform 0.3s ease;
+    width: 16px;
+    height: 16px;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+.sidebar-toggle.flipped svg {
+    transform: rotate(180deg);
+}
+
+/* 主内容区域过渡效果 */
+.main-content {
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: 12px;
+}
+
+/* 收缩状态下的按钮位置调整 */
+.sidebar.collapsed ~ .main-content .sidebar-toggle {
+    margin-left: 0;
+}
